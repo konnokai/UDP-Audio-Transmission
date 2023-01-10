@@ -11,10 +11,8 @@ namespace Discord_Audio_Transmission.NetworkChat
         private readonly UdpClient udpListener;
         private bool listening;
 
-        public UdpAudioReceiver(int portNumber)
+        public UdpAudioReceiver(IPEndPoint endPoint)
         {
-            var endPoint = new IPEndPoint(IPAddress.Loopback, portNumber);
-
             udpListener = new UdpClient();
 
             // To allow us to talk to ourselves for test purposes:
@@ -26,7 +24,7 @@ namespace Discord_Audio_Transmission.NetworkChat
             listening = true;
         }
 
-        private void ListenerThread(object state)
+        private void ListenerThread(object? state)
         {
             var endPoint = (IPEndPoint)state;
             try
@@ -40,6 +38,7 @@ namespace Discord_Audio_Transmission.NetworkChat
             catch (SocketException)
             {
                 // usually not a problem - just means we have disconnected
+                Console.WriteLine("Disconnected");
             }
         }
 

@@ -21,7 +21,7 @@ namespace Discord_Audio_Transmission.NetworkChat
             waveIn.StartRecording();
         }
 
-        void OnAudioCaptured(object sender, WaveInEventArgs e)
+        void OnAudioCaptured(object? sender, WaveInEventArgs e)
         {
             byte[] encoded = codec.Encode(e.Buffer, 0, e.BytesRecorded);
             audioSender.Send(encoded);

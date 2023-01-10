@@ -25,7 +25,7 @@ namespace Discord_Audio_Transmission.NetworkChat
             handler = onAudioReceivedAction;
         }
 
-        private void ListenerThread(object state)
+        private void ListenerThread(object? state)
         {
             var incomingBuffer = new byte[1024 * 16];
             try

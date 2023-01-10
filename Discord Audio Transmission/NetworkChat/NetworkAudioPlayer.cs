@@ -7,10 +7,10 @@ namespace Discord_Audio_Transmission.NetworkChat
     {
         private readonly INetworkChatCodec codec;
         private readonly IAudioReceiver receiver;
-        private readonly IWavePlayer waveOut;
+        private readonly WaveOut waveOut;
         private readonly BufferedWaveProvider waveProvider;
 
-        public NetworkAudioPlayer(INetworkChatCodec codec, IAudioReceiver receiver)
+        public NetworkAudioPlayer(INetworkChatCodec codec, int outputDeviceNumber, IAudioReceiver receiver)
         {
             this.codec = codec;
             this.receiver = receiver;
@@ -18,6 +18,7 @@ namespace Discord_Audio_Transmission.NetworkChat
 
             waveOut = new WaveOut();
             waveProvider = new BufferedWaveProvider(codec.RecordFormat);
+            waveOut.DeviceNumber = outputDeviceNumber;
             waveOut.Init(waveProvider);
             waveOut.Play();
         }
