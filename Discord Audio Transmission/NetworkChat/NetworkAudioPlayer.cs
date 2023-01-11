@@ -1,5 +1,6 @@
-﻿using System;
+﻿using NAudio.Extras;
 using NAudio.Wave;
+using System;
 
 namespace Discord_Audio_Transmission.NetworkChat
 {
@@ -10,6 +11,9 @@ namespace Discord_Audio_Transmission.NetworkChat
         private readonly WaveOut waveOut;
         private readonly BufferedWaveProvider waveProvider;
 
+        public event EventHandler<FftEventArgs> FftCalculated;
+        public event EventHandler<MaxSampleEventArgs> MaximumCalculated;
+
         public NetworkAudioPlayer(INetworkChatCodec codec, int outputDeviceNumber, IAudioReceiver receiver)
         {
             this.codec = codec;
@@ -18,8 +22,15 @@ namespace Discord_Audio_Transmission.NetworkChat
 
             waveOut = new WaveOut();
             waveProvider = new BufferedWaveProvider(codec.RecordFormat);
+
+            var aggregator = new SampleAggregator(waveProvider.ToSampleProvider());
+            aggregator.NotificationCount = codec.RecordFormat.SampleRate / 100;
+            aggregator.PerformFFT = true;
+            aggregator.FftCalculated += (s, a) => FftCalculated?.Invoke(this, a);
+            aggregator.MaximumCalculated += (s, a) => MaximumCalculated?.Invoke(this, a);
+
             waveOut.DeviceNumber = outputDeviceNumber;
-            waveOut.Init(waveProvider);
+            waveOut.Init(aggregator);
             waveOut.Play();
         }
 

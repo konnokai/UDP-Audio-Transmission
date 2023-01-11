@@ -1,5 +1,7 @@
-﻿using System;
+﻿using NAudio.Extras;
 using NAudio.Wave;
+using System;
+using System.Linq;
 
 namespace Discord_Audio_Transmission.NetworkChat
 {
@@ -8,6 +10,8 @@ namespace Discord_Audio_Transmission.NetworkChat
         private readonly INetworkChatCodec codec;
         private readonly IAudioSender audioSender;
         private readonly WaveIn waveIn;
+
+        public event EventHandler<MaxSampleEventArgs> MaximumCalculated;
 
         public NetworkAudioSender(INetworkChatCodec codec, int inputDeviceNumber, IAudioSender audioSender)
         {
@@ -24,6 +28,17 @@ namespace Discord_Audio_Transmission.NetworkChat
         void OnAudioCaptured(object? sender, WaveInEventArgs e)
         {
             byte[] encoded = codec.Encode(e.Buffer, 0, e.BytesRecorded);
+
+            // https://swharden.com/csdv/audio/naudio/
+            // copy buffer into an array of integers
+            Int16[] values = new Int16[e.Buffer.Length / 2];
+            Buffer.BlockCopy(e.Buffer, 0, values, 0, e.Buffer.Length);
+
+            // determine the highest value as a fraction of the maximum possible value
+            float fraction = (float)values.Max() / 32768;
+            float minFraction = (float)values.Min() / 32768;
+            MaximumCalculated?.Invoke(this, new MaxSampleEventArgs(minFraction, fraction));
+
             audioSender.Send(encoded);
         }
 

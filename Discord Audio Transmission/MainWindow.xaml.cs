@@ -1,16 +1,16 @@
 ﻿#pragma warning disable CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮宣告為可為 Null。
 
 using Discord_Audio_Transmission.NetworkChat;
+using Discord_Audio_Transmission.Utils;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using Discord_Audio_Transmission.Utils;
 using System.Net;
 using System.Net.Sockets;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Discord_Audio_Transmission
 {
@@ -31,7 +31,7 @@ namespace Discord_Audio_Transmission
             if (WaveIn.DeviceCount <= 0)
             {
                 MessageBox.Show(this, "沒有音效輸入設備\n請確認設備是否已插入或被停用", "錯誤", MessageBoxButton.OK, MessageBoxImage.Error);
-                tab_Record.Dispatcher.Invoke(() => { tab_Record.IsEnabled = false; });
+                tab_Sender.Dispatcher.Invoke(() => { tab_Sender.IsEnabled = false; });
                 tabControl.Dispatcher.Invoke(() => { tabControl.SelectedIndex = 1; });
             }
             else
@@ -54,14 +54,14 @@ namespace Discord_Audio_Transmission
             else
             {
 
-                cb_PlayerDevice.Dispatcher.Invoke(new Action(() => { cb_PlayerDevice.Items.Add("預設播放裝置"); }));
+                cb_PlayDevice.Dispatcher.Invoke(new Action(() => { cb_PlayDevice.Items.Add("預設播放裝置"); }));
 
                 foreach (var item in GetOutputAudioDevices())
                 {
-                    cb_PlayerDevice.Dispatcher.Invoke(new Action(() => { cb_PlayerDevice.Items.Add($"{item.Key}"); }));
+                    cb_PlayDevice.Dispatcher.Invoke(new Action(() => { cb_PlayDevice.Items.Add($"{item.Key}"); }));
                 }
 
-                cb_PlayerDevice.Dispatcher.Invoke(new Action(() => { cb_PlayerDevice.SelectedIndex = 0; }));
+                cb_PlayDevice.Dispatcher.Invoke(new Action(() => { cb_PlayDevice.SelectedIndex = 0; }));
             }
 
             // use reflection to find all the codecs
@@ -71,7 +71,7 @@ namespace Discord_Audio_Transmission
         }
 
         // NAudio Demo
-        private void btn_StartRecord_Click(object sender, RoutedEventArgs e)
+        private void btn_StartSend_Click(object sender, RoutedEventArgs e)
         {
             string[] strIPAndPort = txt_IPPort.Text.Split(':');
             string IP = strIPAndPort[0];
@@ -84,19 +84,22 @@ namespace Discord_Audio_Transmission
             
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(IP), port);
             networkAudioSender = new NetworkAudioSender(((CodecComboItem)cb_Code.SelectedItem).Codec, recordDeviceNumber, new UdpAudioSender(endPoint));
-            btn_StartRecord.Dispatcher.Invoke(() => { btn_StartRecord.IsEnabled = false; });
-            btn_StopRecord.Dispatcher.Invoke(() => { btn_StopRecord.IsEnabled = true; });
+            networkAudioSender.MaximumCalculated += ((sender, e) => audioVisualization_Sender.AddValue(e.MinSample, e.MaxSample));
+            btn_StartSend.Dispatcher.Invoke(() => { btn_StartSend.IsEnabled = false; });
+            btn_StopSend.Dispatcher.Invoke(() => { btn_StopSend.IsEnabled = true; });
         }
 
-        private void btn_StopRecord_Click(object sender, RoutedEventArgs e)
+        private void btn_StopSend_Click(object sender, RoutedEventArgs e)
         {
             if (networkAudioSender != null)
             {
+                networkAudioSender.MaximumCalculated -= ((sender, e) => audioVisualization_Sender.AddValue(e.MinSample, e.MaxSample));
                 networkAudioSender.Dispose();
             }
 
-            btn_StartRecord.Dispatcher.Invoke(() => { btn_StartRecord.IsEnabled = true; });
-            btn_StopRecord.Dispatcher.Invoke(() => { btn_StopRecord.IsEnabled = false; });
+            btn_StartSend.Dispatcher.Invoke(() => { btn_StartSend.IsEnabled = true; });
+            btn_StopSend.Dispatcher.Invoke(() => { btn_StopSend.IsEnabled = false; });
+            audioVisualization_Sender.Dispatcher.Invoke(() => { audioVisualization_Sender.Reset(); });
         }
 
 
@@ -114,25 +117,28 @@ namespace Discord_Audio_Transmission
 
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(IP), port);
             networkAudioPlayer = new NetworkAudioPlayer(((CodecComboItem)cb_Code.SelectedItem).Codec, playerDeviceNumber, new UdpAudioReceiver(endPoint));
-            btn_StartPlayer.Dispatcher.Invoke(() => { btn_StartPlayer.IsEnabled = false; });
-            btn_StopPlayer.Dispatcher.Invoke(() => { btn_StopPlayer.IsEnabled = true; });
+            networkAudioPlayer.MaximumCalculated += ((sender, e) => audioVisualization_Player.AddValue(e.MinSample, e.MaxSample));
+            btn_StartPlay.Dispatcher.Invoke(() => { btn_StartPlay.IsEnabled = false; });
+            btn_StopPlay.Dispatcher.Invoke(() => { btn_StopPlay.IsEnabled = true; });
         }
 
         private void btn_StopPlayer_Click(object sender, RoutedEventArgs e)
         {
             if (networkAudioPlayer != null)
             {
+                networkAudioPlayer.MaximumCalculated -= ((sender, e) => audioVisualization_Player.AddValue(e.MinSample, e.MaxSample));
                 networkAudioPlayer.Dispose();
             }
 
-            btn_StartPlayer.Dispatcher.Invoke(() => { btn_StartPlayer.IsEnabled = true; });
-            btn_StopPlayer.Dispatcher.Invoke(() => { btn_StopPlayer.IsEnabled = false; });
+            btn_StartPlay.Dispatcher.Invoke(() => { btn_StartPlay.IsEnabled = true; });
+            btn_StopPlay.Dispatcher.Invoke(() => { btn_StopPlay.IsEnabled = false; });
+            audioVisualization_Player.Dispatcher.Invoke(() => { audioVisualization_Player.Reset(); });
         }
 
         private void cb_Device_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             recordDeviceNumber = cb_RecordDevice.SelectedIndex - 1;
-            playerDeviceNumber = cb_PlayerDevice.SelectedIndex - 1;
+            playerDeviceNumber = cb_PlayDevice.SelectedIndex - 1;
         }
 
         // https://stackoverflow.com/a/150974
