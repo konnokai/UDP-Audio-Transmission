@@ -25,7 +25,6 @@ namespace Discord_Audio_Transmission
 
         public MainWindow()
         {
-
             InitializeComponent();
 
             if (WaveIn.DeviceCount <= 0)
@@ -101,7 +100,6 @@ namespace Discord_Audio_Transmission
             btn_StopSend.Dispatcher.Invoke(() => { btn_StopSend.IsEnabled = false; });
             audioVisualization_Sender.Dispatcher.Invoke(() => { audioVisualization_Sender.Reset(); });
         }
-
 
         // NAudio Demo
         private void btn_StartPlayer_Click(object sender, RoutedEventArgs e)
