@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -22,6 +23,7 @@ namespace Discord_Audio_Transmission
         private int recordDeviceNumber = 0, playerDeviceNumber = 0;
         private NetworkAudioSender networkAudioSender;
         private NetworkAudioPlayer networkAudioPlayer;
+        Regex ipAddrRegex = new Regex(@"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
 
         public MainWindow()
         {
@@ -72,20 +74,35 @@ namespace Discord_Audio_Transmission
         // NAudio Demo
         private void btn_StartSend_Click(object sender, RoutedEventArgs e)
         {
-            string[] strIPAndPort = txt_IPPort.Text.Split(':');
-            string IP = strIPAndPort[0];
+            if (!ipAddrRegex.IsMatch(txt_IP.Text))
+            {
+                MessageBox.Show(this, "IP格式錯誤", "錯誤", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             int port;
-            if (strIPAndPort.Length == 1 || !int.TryParse(strIPAndPort[1], out port))
+            if (!int.TryParse(txt_Port.Text, out port))
             {
                 port = FreeTcpPort();
-                txt_IPPort.Dispatcher.Invoke(() => { txt_IPPort.Text = $"{IP}:{port}"; });
+                txt_Port.Dispatcher.Invoke(() => { txt_Port.Text = $"{port}"; });
             }
-            
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(IP), port);
-            networkAudioSender = new NetworkAudioSender(((CodecComboItem)cb_Code.SelectedItem).Codec, recordDeviceNumber, new UdpAudioSender(endPoint));
-            networkAudioSender.MaximumCalculated += ((sender, e) => audioVisualization_Sender.AddValue(e.MinSample, e.MaxSample));
-            btn_StartSend.Dispatcher.Invoke(() => { btn_StartSend.IsEnabled = false; });
-            btn_StopSend.Dispatcher.Invoke(() => { btn_StopSend.IsEnabled = true; });
+
+            try
+            {
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(txt_IP.Text), port);
+                networkAudioSender = new NetworkAudioSender(((CodecComboItem)cb_Code.SelectedItem).Codec, recordDeviceNumber, new UdpAudioSender(endPoint));
+                networkAudioSender.MaximumCalculated += ((sender, e) => audioVisualization_Sender.AddValue(e.MinSample, e.MaxSample));
+                btn_StartSend.Dispatcher.Invoke(() => { btn_StartSend.IsEnabled = false; });
+                btn_StopSend.Dispatcher.Invoke(() => { btn_StopSend.IsEnabled = true; });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "錯誤", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                btn_StartSend.Dispatcher.Invoke(() => { btn_StartSend.IsEnabled = true; });
+                btn_StopSend.Dispatcher.Invoke(() => { btn_StopSend.IsEnabled = false; });
+                audioVisualization_Sender.Dispatcher.Invoke(() => { audioVisualization_Sender.Reset(); });
+            }
         }
 
         private void btn_StopSend_Click(object sender, RoutedEventArgs e)
@@ -104,20 +121,28 @@ namespace Discord_Audio_Transmission
         // NAudio Demo
         private void btn_StartPlayer_Click(object sender, RoutedEventArgs e)
         {
-            string[] strIPAndPort = txt_IPPort.Text.Split(':');
-            string IP = strIPAndPort[0];
             int port;
-            if (strIPAndPort.Length == 1 || !int.TryParse(strIPAndPort[1], out port))
+            if (!int.TryParse(txt_Port.Text, out port))
             {
                 port = FreeTcpPort();
-                txt_IPPort.Dispatcher.Invoke(() => { txt_IPPort.Text = $"{IP}:{port}"; });
+                txt_Port.Dispatcher.Invoke(() => { txt_Port.Text = $"{port}"; });
             }
+            try
+            {
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port);
+                networkAudioPlayer = new NetworkAudioPlayer(((CodecComboItem)cb_Code.SelectedItem).Codec, playerDeviceNumber, new UdpAudioReceiver(endPoint));
+                networkAudioPlayer.MaximumCalculated += ((sender, e) => audioVisualization_Player.AddValue(e.MinSample, e.MaxSample));
+                btn_StartPlay.Dispatcher.Invoke(() => { btn_StartPlay.IsEnabled = false; });
+                btn_StopPlay.Dispatcher.Invoke(() => { btn_StopPlay.IsEnabled = true; });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "錯誤", MessageBoxButton.OK, MessageBoxImage.Error);
 
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(IP), port);
-            networkAudioPlayer = new NetworkAudioPlayer(((CodecComboItem)cb_Code.SelectedItem).Codec, playerDeviceNumber, new UdpAudioReceiver(endPoint));
-            networkAudioPlayer.MaximumCalculated += ((sender, e) => audioVisualization_Player.AddValue(e.MinSample, e.MaxSample));
-            btn_StartPlay.Dispatcher.Invoke(() => { btn_StartPlay.IsEnabled = false; });
-            btn_StopPlay.Dispatcher.Invoke(() => { btn_StopPlay.IsEnabled = true; });
+                btn_StartPlay.Dispatcher.Invoke(() => { btn_StartPlay.IsEnabled = true; });
+                btn_StopPlay.Dispatcher.Invoke(() => { btn_StopPlay.IsEnabled = false; });
+                audioVisualization_Player.Dispatcher.Invoke(() => { audioVisualization_Player.Reset(); });
+            }
         }
 
         private void btn_StopPlayer_Click(object sender, RoutedEventArgs e)

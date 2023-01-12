@@ -18,7 +18,6 @@ namespace Discord_Audio_Transmission.NetworkChat
         {
             this.codec = codec;
             this.receiver = receiver;
-            receiver.OnReceived(OnDataReceived);
 
             waveOut = new WaveOut();
             waveProvider = new BufferedWaveProvider(codec.RecordFormat);
@@ -28,6 +27,8 @@ namespace Discord_Audio_Transmission.NetworkChat
             aggregator.PerformFFT = true;
             aggregator.FftCalculated += (s, a) => FftCalculated?.Invoke(this, a);
             aggregator.MaximumCalculated += (s, a) => MaximumCalculated?.Invoke(this, a);
+
+            receiver.OnReceived(OnDataReceived);
 
             waveOut.DeviceNumber = outputDeviceNumber;
             waveOut.Init(aggregator);

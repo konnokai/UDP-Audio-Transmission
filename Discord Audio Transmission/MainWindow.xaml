@@ -10,14 +10,15 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="74"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="237*"/>
+            <ColumnDefinition Width="238*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="32"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TabControl x:Name="tabControl" Grid.Row="2" Grid.ColumnSpan="2">
+        <TabControl x:Name="tabControl" Grid.Row="2" Grid.ColumnSpan="3">
             <TabItem x:Name="tab_Sender" Header="發言">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
@@ -49,9 +50,11 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Label Content="UDP IP" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
-        <TextBox x:Name="txt_IPPort" TextWrapping="Wrap" Text="127.0.0.1:11451" VerticalAlignment="Center" Margin="73,0,10,0" Grid.ColumnSpan="2"/>
-        <Label Content="編碼設定" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="1"/>
-        <ComboBox x:Name="cb_Code" Margin="73,0,10,0" VerticalAlignment="Center" IsReadOnly="True" Height="22" SelectedIndex="0" ToolTip="編碼" Grid.Row="1" Grid.ColumnSpan="2"/>
+        <Label Content="UDP IP" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Height="26" Width="49"/>
+        <TextBox x:Name="txt_IP" TextWrapping="Wrap" Text="127.0.0.1" VerticalAlignment="Center" Margin="0,0,10,0" Grid.Column="1" Height="18"/>
+        <Label Content="編碼設定" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Height="26" Width="58"/>
+        <ComboBox x:Name="cb_Code" Margin="73,0,10,0" VerticalAlignment="Center" IsReadOnly="True" Height="22" SelectedIndex="0" ToolTip="編碼" Grid.Row="1" Grid.ColumnSpan="3"/>
+        <Label Content="Port" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="2" Height="26" Width="49"/>
+        <TextBox x:Name="txt_Port" TextWrapping="Wrap" Text="11451" VerticalAlignment="Center" Margin="50,0,10,0" Grid.Column="2" Height="18"/>
     </Grid>
 </Window>
