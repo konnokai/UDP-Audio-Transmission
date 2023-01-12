@@ -50,7 +50,7 @@
             </TabItem>
         </TabControl>
         <Label Content="UDP IP" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
-        <TextBox x:Name="txt_IPPort" TextWrapping="Wrap" Text="127.0.0.1" VerticalAlignment="Center" Margin="73,0,10,0" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txt_IPPort" TextWrapping="Wrap" Text="127.0.0.1:11451" VerticalAlignment="Center" Margin="73,0,10,0" Grid.ColumnSpan="2"/>
         <Label Content="編碼設定" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="1"/>
         <ComboBox x:Name="cb_Code" Margin="73,0,10,0" VerticalAlignment="Center" IsReadOnly="True" Height="22" SelectedIndex="0" ToolTip="編碼" Grid.Row="1" Grid.ColumnSpan="2"/>
     </Grid>

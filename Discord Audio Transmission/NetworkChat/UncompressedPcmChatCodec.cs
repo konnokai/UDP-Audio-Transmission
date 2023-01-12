@@ -7,7 +7,7 @@ namespace Discord_Audio_Transmission.NetworkChat
     {
         public UncompressedPcmChatCodec()
         {
-            RecordFormat = new WaveFormat(48000, 16, 1);
+            RecordFormat = new WaveFormat(48000, 16, 2);
         }
         
         public string Name => "PCM 48kHz 16 bit uncompressed";
