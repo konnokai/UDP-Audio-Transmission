@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
-using NAudio.Wave;
+﻿using NAudio.Wave;
 using NSpeex;
+using System;
 using System.Diagnostics;
 
 namespace Discord_Audio_Transmission.NetworkChat
