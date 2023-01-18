@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Discord_Audio_Transmission.Utils
+namespace UDP_Audio_Transmission.Utils
 {
     static class ReflectionHelper
     {

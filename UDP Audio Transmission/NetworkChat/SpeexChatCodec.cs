@@ -3,7 +3,7 @@ using NSpeex;
 using System;
 using System.Diagnostics;
 
-namespace Discord_Audio_Transmission.NetworkChat
+namespace UDP_Audio_Transmission.NetworkChat
 {
     class NarrowBandSpeexCodec : SpeexChatCodec
     {

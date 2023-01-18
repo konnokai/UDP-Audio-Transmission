@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Discord_Audio_Transmission.NetworkChat
+namespace UDP_Audio_Transmission.NetworkChat
 {
     interface IAudioSender : IDisposable
     {

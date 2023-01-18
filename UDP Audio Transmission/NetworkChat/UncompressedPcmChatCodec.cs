@@ -1,7 +1,7 @@
 ﻿using System;
 using NAudio.Wave;
 
-namespace Discord_Audio_Transmission.NetworkChat
+namespace UDP_Audio_Transmission.NetworkChat
 {
     class UncompressedPcmChatCodec : INetworkChatCodec
     {

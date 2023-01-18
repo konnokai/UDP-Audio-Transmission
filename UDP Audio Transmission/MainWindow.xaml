@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Discord_Audio_Transmission"
-        xmlns:NAudioWpfDemo="clr-namespace:NAudioWpfDemo" x:Class="Discord_Audio_Transmission.MainWindow"
+        xmlns:local="clr-namespace:UDP_Audio_Transmission"
+        xmlns:NAudioWpfDemo="clr-namespace:NAudioWpfDemo" x:Class="UDP_Audio_Transmission.MainWindow"
         mc:Ignorable="d"
-        Title="Discord收發音" Height="384" Width="549">
+        Title="Discord收發音" Height="618" Width="699">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="74"/>
@@ -47,6 +47,41 @@
                     <Button x:Name="btn_StartPlay" Content="開始播放" HorizontalAlignment="Left" VerticalAlignment="Center" Height="20" Width="52" Click="btn_StartPlayer_Click" Grid.Row="2" Margin="10,0,0,0"/>
                     <Button x:Name="btn_StopPlay" Content="結束播放" VerticalAlignment="Center" Height="20" Width="52" HorizontalAlignment="Right" IsEnabled="False" Click="btn_StopPlayer_Click" Grid.Row="2" Margin="0,0,10,0"/>
                     <NAudioWpfDemo:PolygonWaveFormControl x:Name="audioVisualization_Player" Grid.Row="1"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Discord連線">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="32"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="Token 1" VerticalAlignment="Center" Margin="10,0,0,0" HorizontalAlignment="Left" Grid.Row="2"/>
+                    <TextBox x:Name="txt_DiscordToken1" Margin="10,0,10,0" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2"/>
+                    <Label Content="Token 2" VerticalAlignment="Center" Margin="10,0,0,0" Grid.Row="3" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="txt_DiscordToken2" Margin="10,0,10,0" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3"/>
+                    <NAudioWpfDemo:PolygonWaveFormControl Grid.Row="4" Grid.ColumnSpan="2" Margin="0,5,0,5"/>
+                    <NAudioWpfDemo:PolygonWaveFormControl Grid.Row="5" Grid.ColumnSpan="2" Margin="0,5,0,5"/>
+                    <NAudioWpfDemo:PolygonWaveFormControl Grid.Row="6" Grid.ColumnSpan="2" Margin="0,5,0,5"/>
+                    <RichTextBox x:Name="rtb_DiscordLog" Grid.Row="7" Grid.ColumnSpan="2" Margin="0,5,0,0" IsEnabled="False">
+                        <FlowDocument>
+                            <Paragraph>
+                                <Run />
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                    <Button Content="Button" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="8" VerticalAlignment="Center"/>
+                    <Button Grid.Column="1" Content="Button" HorizontalAlignment="Right" Grid.Row="8" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 </Grid>
             </TabItem>
         </TabControl>

@@ -1,7 +1,7 @@
 ﻿#pragma warning disable CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮宣告為可為 Null。
 
-using Discord_Audio_Transmission.NetworkChat;
-using Discord_Audio_Transmission.Utils;
+using UDP_Audio_Transmission.NetworkChat;
+using UDP_Audio_Transmission.Utils;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System;
@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Discord_Audio_Transmission
+namespace UDP_Audio_Transmission
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

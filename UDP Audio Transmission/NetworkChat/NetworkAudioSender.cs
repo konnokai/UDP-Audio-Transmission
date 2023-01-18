@@ -3,7 +3,7 @@ using NAudio.Wave;
 using System;
 using System.Linq;
 
-namespace Discord_Audio_Transmission.NetworkChat
+namespace UDP_Audio_Transmission.NetworkChat
 {
     class NetworkAudioSender : IDisposable
     {

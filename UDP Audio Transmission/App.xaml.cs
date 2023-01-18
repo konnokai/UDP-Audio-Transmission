@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Discord_Audio_Transmission
+namespace UDP_Audio_Transmission
 {
     /// <summary>
     /// Interaction logic for App.xaml
