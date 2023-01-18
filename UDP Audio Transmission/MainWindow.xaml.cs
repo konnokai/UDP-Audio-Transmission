@@ -92,8 +92,11 @@ namespace UDP_Audio_Transmission
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(txt_IP.Text), port);
                 networkAudioSender = new NetworkAudioSender(((CodecComboItem)cb_Code.SelectedItem).Codec, recordDeviceNumber, new UdpAudioSender(endPoint));
                 networkAudioSender.MaximumCalculated += ((sender, e) => audioVisualization_Sender.AddValue(e.MinSample, e.MaxSample));
-                btn_StartSend.Dispatcher.Invoke(() => { btn_StartSend.IsEnabled = false; });
-                btn_StopSend.Dispatcher.Invoke(() => { btn_StopSend.IsEnabled = true; });
+                if (sender is Button)
+                {
+                    btn_StartSend.Dispatcher.Invoke(() => { btn_StartSend.IsEnabled = false; });
+                    btn_StopSend.Dispatcher.Invoke(() => { btn_StopSend.IsEnabled = true; });
+                }
             }
             catch (Exception ex)
             {
@@ -113,9 +116,12 @@ namespace UDP_Audio_Transmission
                 networkAudioSender.Dispose();
             }
 
-            btn_StartSend.Dispatcher.Invoke(() => { btn_StartSend.IsEnabled = true; });
-            btn_StopSend.Dispatcher.Invoke(() => { btn_StopSend.IsEnabled = false; });
-            audioVisualization_Sender.Dispatcher.Invoke(() => { audioVisualization_Sender.Reset(); });
+            if (sender is Button)
+            {
+                btn_StartSend.Dispatcher.Invoke(() => { btn_StartSend.IsEnabled = true; });
+                btn_StopSend.Dispatcher.Invoke(() => { btn_StopSend.IsEnabled = false; });
+                audioVisualization_Sender.Dispatcher.Invoke(() => { audioVisualization_Sender.Reset(); });
+            }
         }
 
         // NAudio Demo
@@ -132,8 +138,12 @@ namespace UDP_Audio_Transmission
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port);
                 networkAudioPlayer = new NetworkAudioPlayer(((CodecComboItem)cb_Code.SelectedItem).Codec, playerDeviceNumber, new UdpAudioReceiver(endPoint));
                 networkAudioPlayer.MaximumCalculated += ((sender, e) => audioVisualization_Player.AddValue(e.MinSample, e.MaxSample));
-                btn_StartPlay.Dispatcher.Invoke(() => { btn_StartPlay.IsEnabled = false; });
-                btn_StopPlay.Dispatcher.Invoke(() => { btn_StopPlay.IsEnabled = true; });
+
+                if (sender is Button)
+                {
+                    btn_StartPlay.Dispatcher.Invoke(() => { btn_StartPlay.IsEnabled = false; });
+                    btn_StopPlay.Dispatcher.Invoke(() => { btn_StopPlay.IsEnabled = true; });
+                }
             }
             catch (Exception ex)
             {
@@ -153,15 +163,29 @@ namespace UDP_Audio_Transmission
                 networkAudioPlayer.Dispose();
             }
 
-            btn_StartPlay.Dispatcher.Invoke(() => { btn_StartPlay.IsEnabled = true; });
-            btn_StopPlay.Dispatcher.Invoke(() => { btn_StopPlay.IsEnabled = false; });
-            audioVisualization_Player.Dispatcher.Invoke(() => { audioVisualization_Player.Reset(); });
+            if (sender is Button)
+            {
+                btn_StartPlay.Dispatcher.Invoke(() => { btn_StartPlay.IsEnabled = true; });
+                btn_StopPlay.Dispatcher.Invoke(() => { btn_StopPlay.IsEnabled = false; });
+                audioVisualization_Player.Dispatcher.Invoke(() => { audioVisualization_Player.Reset(); });
+            }
         }
 
         private void cb_Device_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             recordDeviceNumber = cb_RecordDevice.SelectedIndex - 1;
             playerDeviceNumber = cb_PlayDevice.SelectedIndex - 1;
+
+            if (sender == cb_PlayDevice && networkAudioPlayer != null)
+            {
+                btn_StopPlayer_Click(sender, null);
+                btn_StartPlayer_Click(sender, null);
+            }
+            else if (sender == cb_RecordDevice && networkAudioSender != null)
+            {
+                btn_StopSend_Click(sender, null);
+                btn_StartSend_Click(sender, null);
+            }                
         }
 
         // https://stackoverflow.com/a/150974
