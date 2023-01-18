@@ -236,7 +236,7 @@ namespace Discord_Audio_Transmission
         {
             var sorted = from codec in codecs
                          where codec.IsAvailable
-                         orderby codec.BitsPerSecond ascending
+                         orderby codec.BitsPerSecond descending
                          select codec;
 
             foreach (var codec in sorted)
